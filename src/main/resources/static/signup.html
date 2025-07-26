@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 테스트</title>
+</head>
+<body>
+<h2>SignUpTest</h2>
+
+<form id="signForm">
+    <label>ID : <input type="text"   id="userId"   required></label><br>
+    <label>Name : <input type="text" id="userName" required></label><br>
+    <label>Password : <input type="password" id="userPassword" required></label><br>
+    <label>Email : <input type="email" id="userEmail"  required></label><br>
+    <label>Tel : <input type="text"   id="userTel"></label><br>
+    <button type="submit">SignUp</button>
+</form>
+
+<pre id="result"></pre>
+
+<script>
+    const form  = document.getElementById('signForm');
+    const resEl = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        userId:   document.getElementById('userId').value,
+        userName: document.getElementById('userName').value,
+        userPassword: document.getElementById('userPassword').value,
+        userEmail:    document.getElementById('userEmail').value,
+        userTel:      document.getElementById('userTel').value
+      };
+
+      try {
+        const r = await fetch('/api/v1/users/sign-up', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (r.ok) {
+          resEl.textContent = '✅ 가입 성공 (HTTP ' + r.status + ')';
+          form.reset();
+        } else {
+          const txt = await r.text();
+          resEl.textContent = '❌ 실패 (HTTP ' + r.status + ')\n' + txt;
+        }
+      } catch (err) {
+        resEl.textContent = '❌ 요청 오류 : ' + err;
+      }
+    });
+</script>
+</body>
+</html>

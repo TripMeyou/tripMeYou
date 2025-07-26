@@ -1,0 +1,36 @@
+name: Deploy SQL to Azure MySQL
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/main/resources/schema.sql'
+      - 'src/main/resources/data.sql'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install MySQL client
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+
+      - name: Execute schema.sql
+        run: |
+          mysql -h "${{ secrets.AZURE_DB_HOST }}" \
+                -P "${{ secrets.AZURE_DB_PORT }}" \
+                -u "${{ secrets.AZURE_DB_USER }}" \
+                -p"${{ secrets.AZURE_DB_PASSWORD }}" \
+                "${{ secrets.AZURE_DB_NAME }}" < src/main/resources/schema.sql
+
+      - name: Execute data.sql (optional)
+        if: hashFiles('src/main/resources/data.sql') != ''
+        run: |
+          mysql -h "${{ secrets.AZURE_DB_HOST }}" \
+                -P "${{ secrets.AZURE_DB_PORT }}" \
+                -u "${{ secrets.AZURE_DB_USER }}" \
+                -p"${{ secrets.AZURE_DB_PASSWORD }}" \
+                "${{ secrets.AZURE_DB_NAME }}" < src/main/resources/data.sql
