@@ -2,6 +2,9 @@ name: Deploy SQL to Azure MySQL
 
 on:
   push:
+    branches:
+      - main
+      - develop
     paths:
       - 'src/main/resources/schema.sql'
       - 'src/main/resources/data.sql'
