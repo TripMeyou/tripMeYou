@@ -8,3 +8,4 @@ CREATE TABLE IF NOT EXISTS users (
     created_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     -- userPost, userChat은 관계 테이블로 추후 구성
 );
+-- 밑으로 테이블 추가
